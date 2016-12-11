@@ -2,39 +2,53 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System;
 
 public class SimulationManager : MonoBehaviour
 {
-	public static SimulationManager manager;
-	public GameObject[] auvs;
-	public GameObject[] buoys;
+	// Environement
+	public SortedDictionary<string, GameObject> auvs = new SortedDictionary<string, GameObject>();
+	public SortedDictionary<string, GameObject> buoy = new SortedDictionary<string, GameObject>();
 	//public int totalAuv;
 	//public int totalBuoy;
 
+	// Server
+	private Queue<String> TaskQueue;
+	public object _queueLock;
+
 	void Awake()
 	{
-		manager = this;
 	}
 
 	// Use this for initialization
 	void Start ()
 	{
-	
+		TaskQueue = TCPserver.tcpserver.getTaskQueue();
+		_queueLock = TCPserver.tcpserver.getQueueLock();
 	}
 	
 	// Update is called once per frame
 	void Update ()
 	{
-	
-	}
-	public static GameObject[] getAuvs()
-	{
-		return manager.auvs.ToArray();
+		lock (_queueLock)
+		{
+			while (TaskQueue.Count > 0) {
+				string data=TaskQueue.Dequeue();
+				updateEnv(data);
+			}
+		}
 	}
 
-	public static GameObject getBuoys(int index)
+	void updateEnv(string data)
 	{
-		return manager.buoys[index];
+		Debug.Log ("enter update");
+		AuvState auv = AuvState.CreateFromJSON(data);
+		Debug.Log("Sim Order : auv  " + auv.name + "  move to " + auv.x + "," + auv.y);
+
+		if(!auvs.ContainsKey(auv.name)){
+			auvs[auv.name] = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+		}
+		auvs[auv.name].transform.position = new Vector3((float)auv.x, (float)0.0, (float)auv.y);
 	}
 }
 

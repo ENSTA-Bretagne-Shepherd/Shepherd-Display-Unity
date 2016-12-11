@@ -9,35 +9,49 @@ using System.Threading;
 using System.Collections.Generic;
 
 public class TCPserver:MonoBehaviour{
+	// Global access
+	public static TCPserver tcpserver;
+
+	// Connection state
 	public bool isConnection;
 	public Thread mThread;
 	public TcpListener server;
-	private string data;
-	private Queue<String> TaskQueue = new Queue<String>();
-	private object _queueLock = new object();
-	//private Transform target;
-	private Vector3 target;
-	private GameObject[] auvs; 
+
+	// Received data
+	// private string data;
+	public Queue<String> TaskQueue = new Queue<String>();
+	public object _queueLock = new object();
+
+	// Access methods
+	public Queue<String> getTaskQueue(){ 
+		return TaskQueue;
+	}
+	public object getQueueLock(){
+		return _queueLock;
+	}
+
+	void Awake(){
+		tcpserver = (tcpserver == null) ? this : tcpserver;
+	}
 
 	// Use this for initialization
 	void Start(){
 		isConnection=false;
-		auvs= SimulationManager.getAuvs();
 
 		print ("StartThread");
-		ThreadStart ts = new ThreadStart(Update1);
+		ThreadStart ts = new ThreadStart(ServerThread);
 		mThread = new Thread(ts);
 		mThread.Start();
 
 	}
 	void Update () {
-		lock (_queueLock)
-		{
-			if (TaskQueue.Count > 0) {
-				string data=TaskQueue.Dequeue ();
-				updateAuv (data);
-			}
-		}
+		// lock (_queueLock)
+		// {
+		// 	if (TaskQueue.Count > 0) {
+		// 		string data=TaskQueue.Dequeue ();
+		// 		updateAuv (data);
+		// 	}
+		// }
 	}
 
 	void OnApplicationQuit(){
@@ -45,8 +59,7 @@ public class TCPserver:MonoBehaviour{
 		mThread.Abort (); 
 	}
 
-	// Update is called once per frame
-	void Update1()
+	void ServerThread()
 	{  
 		TcpListener server=null;  
 		try
@@ -63,7 +76,7 @@ public class TCPserver:MonoBehaviour{
 
 			// Buffer for reading data
 			Byte[] bytes = new Byte[256];
-			data = null;
+			string data = null;
 
 			// Enter the listening loop.
 			while(true)
@@ -100,15 +113,15 @@ public class TCPserver:MonoBehaviour{
 							TaskQueue.Enqueue(data);
 					}
 
-					// Process the data sent by the client.
-					data = data.ToUpper();
+					// // Process the data sent by the client.
+					// data = data.ToUpper();
 
-					byte[] msg = System.Text.Encoding.ASCII.GetBytes(data);
+					// byte[] msg = System.Text.Encoding.ASCII.GetBytes(data);
 
 
-					// Send back a response.
-					stream.Write(msg, 0, msg.Length);
-					Debug.Log("Sent:"+ data);          
+					// // Send back a response.
+					// stream.Write(msg, 0, msg.Length);
+					// Debug.Log("Sent:"+ data);          
 				}
 
 				// Shutdown and end connection
@@ -127,22 +140,24 @@ public class TCPserver:MonoBehaviour{
 
 		//yield return null;
 
-
 	}
 
-	void updateAuv(string data)
-	{
-		Debug.Log ("enter update");
+	// void updateAuv(string data)
+	// {
+	// 	Debug.Log ("enter update");
 
-		//Auv indexAuv speed x y z
-		string[] splitData = data.Split (" "[0]);
-		int indexAuv = int.Parse(splitData [1]);
-		int speed = int.Parse(splitData [2]);
-		Vector3 target = new Vector3 (int.Parse(splitData [3]), int.Parse(splitData [4]), int.Parse(splitData [5]));
+	// 	//Auv indexAuv speed x y z
+	// 	// string[] splitData = data.Split (" "[0]);
+	// 	// int indexAuv = int.Parse(splitData [1]);
+	// 	// int speed = int.Parse(splitData [2]);
+	// 	// Vector3 target = new Vector3 (int.Parse(splitData [3]), int.Parse(splitData [4]), int.Parse(splitData [5]));
 
-		auvs[indexAuv].GetComponent<AuvBehaviour>().setSpeed(speed);
-		auvs[indexAuv].GetComponent<AuvBehaviour>().setTarget (target);
+	// 	// auvs[indexAuv].GetComponent<AuvBehaviour>().setSpeed(speed);
+	// 	// auvs[indexAuv].GetComponent<AuvBehaviour>().setTarget (target);
 
-		Debug.Log("Order : auv  "+ indexAuv+"  move to " + target+" speed  : "+speed);
-	}
+	// 	// Debug.Log("Order : auv  "+ indexAuv+"  move to " + target+" speed  : "+speed);
+	// 	AuvSerialized auv = AuvSerialized.CreateFromJSON(data);
+	// 	Debug.Log("Order : auv  " + auv.name + "  move to " + auv.x + "," + auv.y);
+		
+	// }
 }	
