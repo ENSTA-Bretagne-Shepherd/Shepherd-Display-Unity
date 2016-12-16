@@ -1,6 +1,6 @@
 # Unity
-/Library
-/Temp
+Library/
+Temp/
 
 *.sublime-project
 *.sublime-workspace
@@ -8,5 +8,5 @@
 
 
 # Client
-/client-api/build
+client-api/build
 
