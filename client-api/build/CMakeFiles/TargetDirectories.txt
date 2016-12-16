@@ -1,0 +1,3 @@
+/home/tonywelte/develop/Shepherd-Display-Unity/client-api/build/CMakeFiles/edit_cache.dir
+/home/tonywelte/develop/Shepherd-Display-Unity/client-api/build/CMakeFiles/rebuild_cache.dir
+/home/tonywelte/develop/Shepherd-Display-Unity/client-api/build/CMakeFiles/test.dir
