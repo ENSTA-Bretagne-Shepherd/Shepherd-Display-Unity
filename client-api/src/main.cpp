@@ -7,7 +7,7 @@ int main(int argc, char const *argv[])
 
 	DisplayAPI display(argv[1], 13000);
 
-	psi=M_PI;  //vent
+	float psi=M_PI;  //vent
 
 
 	Params params;
@@ -19,10 +19,10 @@ int main(int argc, char const *argv[])
 	display.sendParams(params);
 
 	float t = 0;
-	float tmax = 20;
+	float tmax = 40;
 	float dt = 0.1;
 	float deltavmax=0;
-	float yaw=0;
+	float theta=0;
 
 	while(t < tmax){
 		
