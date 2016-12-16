@@ -65,7 +65,6 @@ public class camera : MonoBehaviour {
             float factorY = differenceY / halfHeight;
             vAngle = -factorY * (float)Math.PI + (float)Math.PI / 4;
 
-            
             transform.position = new Vector3(
                 focus.x + cameraDistance * (float)(Math.Cos(hAngle) * Math.Cos(vAngle)),
                 focus.y + cameraDistance * (float)(Math.Sin(vAngle)),
@@ -79,7 +78,8 @@ public class camera : MonoBehaviour {
             Debug.Log("test");
             RaycastHit hitInfo = new RaycastHit();
             if(Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hitInfo)){
-                Debug.Log(hitInfo.transform.gameObject.name);
+                objectfocus = true;
+                m_objfocus = hitInfo.transform.gameObject;
             }
             else{
                 Debug.Log("Missed");
@@ -90,43 +90,32 @@ public class camera : MonoBehaviour {
             objectfocus = false;
             focus.x += (float)(0.1 * Math.Sin(hAngle));
             focus.z -= (float)(0.1 * Math.Cos(hAngle));
-            transform.position = new Vector3(
-                focus.x + cameraDistance * (float)(Math.Cos(hAngle) * Math.Cos(vAngle)),
-                focus.y + cameraDistance * (float)(Math.Sin(vAngle)),
-                focus.z + cameraDistance * (float)(Math.Sin(hAngle) * Math.Cos(vAngle)));
         }
         if (Input.GetKey("right"))
         {
             objectfocus = false;
             focus.x -= (float)(0.1 * Math.Sin(hAngle));
             focus.z += (float)(0.1 * Math.Cos(hAngle));
-            transform.position = new Vector3(
-                focus.x + cameraDistance * (float)(Math.Cos(hAngle) * Math.Cos(vAngle)),
-                focus.y + cameraDistance * (float)(Math.Sin(vAngle)),
-                focus.z + cameraDistance * (float)(Math.Sin(hAngle) * Math.Cos(vAngle)));
         }
         if (Input.GetKey("up"))
         {
             objectfocus = false;
             focus.x -= (float)(0.1 * Math.Cos(hAngle));
             focus.z -= (float)(0.1 * Math.Sin(hAngle));
-            transform.position = new Vector3(
-                focus.x + cameraDistance * (float)(Math.Cos(hAngle) * Math.Cos(vAngle)),
-                focus.y + cameraDistance * (float)(Math.Sin(vAngle)),
-                focus.z + cameraDistance * (float)(Math.Sin(hAngle) * Math.Cos(vAngle)));
         }
         if (Input.GetKey("down"))
         {
             objectfocus = false;
             focus.x += (float)(0.1 * Math.Cos(hAngle));
             focus.z += (float)(0.1 * Math.Sin(hAngle));
-            transform.position = new Vector3(
-                focus.x + cameraDistance * (float)(Math.Cos(hAngle) * Math.Cos(vAngle)),
-                focus.y + cameraDistance * (float)(Math.Sin(vAngle)),
-                focus.z + cameraDistance * (float)(Math.Sin(hAngle) * Math.Cos(vAngle)));
             
         }
-        if(Input.GetKey(""))
+        if(Input.GetKey("space")){
+            focus.y += (float)0.1;
+        }
+        if(Input.GetKey(KeyCode.LeftShift)){
+            focus.y -= (float)0.1;
+        }
         transform.position = new Vector3(
                 focus.x + cameraDistance * (float)(Math.Cos(hAngle) * Math.Cos(vAngle)),
                 focus.y + cameraDistance * (float)(Math.Sin(vAngle)),
