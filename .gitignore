@@ -1,0 +1,12 @@
+# Unity
+/Library
+/Temp
+
+*.sublime-project
+*.sublime-workspace
+
+
+
+# Client
+/client-api/build
+
