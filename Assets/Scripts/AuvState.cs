@@ -10,6 +10,7 @@ public class AuvState{
 	public float pitch;
 	public float roll;
 	public float speed;
+	public float sailYaw;
 
 	public static AuvState CreateFromJSON(string jsonString)
 	{
