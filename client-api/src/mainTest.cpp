@@ -3,7 +3,8 @@
 #include <math.h>
 
 #include "world.h"
-#include "config.h"
+
+#define DT 0.2
 
 double dt = DT;
 

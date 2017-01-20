@@ -5,6 +5,20 @@
 #include <vector>
 #include <map>
 
+#ifdef WIN32
+#include <windows.h>
+#include <winsock2.h>
+#include <ws2tcpip.h>
+#include <stdlib.h>
+#include <stdio.h>
+
+
+// Need to link with Ws2_32.lib, Mswsock.lib, and Advapi32.lib
+#pragma comment (lib, "Ws2_32.lib")
+#pragma comment (lib, "Mswsock.lib")
+#pragma comment (lib, "AdvApi32.lib")
+#endif
+
 class Params; // Forward declaration of Params
 
 class DisplayAPI
@@ -15,7 +29,11 @@ public:
     void sendParams(Params params);
     void setState(std::string auvname, double x, double y, double theta);
 private:
+    #ifndef WIN32
 	int sock;
+    #else
+    SOCKET sock = INVALID_SOCKET;
+    #endif
 };
 
 /*!
