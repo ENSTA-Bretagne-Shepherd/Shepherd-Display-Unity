@@ -59,8 +59,32 @@ void DisplayAPI::sendParams(Params params){
         printf("Error while writing to socket.\n");
 }
 
-void DisplayAPI::setState(std::string auvname, double x, double y, double theta){
+void DisplayAPI::sendSailBoatState(std::string auvname, double x, double y, double theta){
+    Params params;
+    params["type"] = "sailboat";
+    params["name"] = auvname;
+    params["x"] = x;
+    params["y"] = y;
+    params["yaw"] = theta;
+    sendParams(params);
+}
 
+void DisplayAPI::sendBuoyState(std::string auvname, double x, double y, double z){
+    Params params;
+    params["type"] = "buoy";
+    params["name"] = auvname;
+    params["x"] = x;
+    params["y"] = y;
+    params["z"] = z;
+    sendParams(params);
+}
+
+void displaySegment(double x1, double y1, double x2, double y2){
+    Params["type"] = "segment";
+    params["x1"] = x1;
+    params["y1"] = y1;
+    params["x2"] = x2;
+    params["y2"] = y2;
 }
 
 #else
@@ -142,9 +166,6 @@ void DisplayAPI::sendParams(Params params){
 
 }
 
-void DisplayAPI::setPosition(std::string auvname, double x, double y, double theta){
-
-}
 
 #endif
 

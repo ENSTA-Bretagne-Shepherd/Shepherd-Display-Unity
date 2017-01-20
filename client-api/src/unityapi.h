@@ -27,7 +27,9 @@ public:
 	DisplayAPI(const char* address, int port);
 	~DisplayAPI();
     void sendParams(Params params);
-    void setState(std::string auvname, double x, double y, double theta);
+    void sendSailBoatState(std::string auvname, double x, double y, double theta);
+    void sendBuoyState(std::string auvname, double x, double y, double z);
+    void displaySegment(double x1, double y1, double x2, double y2);
 private:
     #ifndef WIN32
 	int sock;

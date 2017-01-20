@@ -46,8 +46,8 @@ public class SimulationManager : MonoBehaviour
 		Debug.Log("Sim Order : auv  " + auv.name + "  move to " + auv.x + "," + auv.y);
 
 		if(!auvs.ContainsKey(auv.name)){
-			//auvs[auv.name] = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-			auvs[auv.name] = Instantiate(Resources.Load("Auv")) as GameObject;
+			auvs[auv.name] = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+			//auvs[auv.name] = Instantiate(Resources.Load("Auv")) as GameObject;
 		}
 		auvs[auv.name].transform.position = new Vector3((float)auv.x, (float)0.0, (float)auv.y);
 		auvs [auv.name].transform.eulerAngles = new Vector3 ((float)auv.roll, -(float)auv.yaw, (float)auv.pitch);

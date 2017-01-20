@@ -9,14 +9,7 @@ int main(int argc, char const *argv[])
 
 	float psi=M_PI;  //vent
 
-
-	Params params;
-	params["name"] = "auv1";
-	params["x"] = 10;
-	params["y"] = 0;
-	params["yaw"] = 0.0;
-
-	display.sendParams(params);
+	display.sendSailBoatState("auv1", 10, 0, 0.0);
 
 	float t = 0;
 	float tmax = 40;
@@ -29,17 +22,14 @@ int main(int argc, char const *argv[])
 		double xw_ap=2*cos(psi-theta)-1; //
 		double yw_ap=2*sin(psi-theta);   //
 		double psi_ap=atan2(yw_ap,xw_ap); //
-		
-		params["x"] = 10*cos(2*M_PI*t/10);
-		params["y"] = 10*sin(2*M_PI*t/10);
-
 		theta = 360*t/10;
-		params["yaw"]= theta; //
 		
-		deltavmax=0.5*M_PI*(0.5*(cos(psi-theta)+1)); //
+		//deltavmax=0.5*M_PI*(0.5*(cos(psi-theta)+1));
+		//if (sin(-psi_ap)>0) params["sailYaw"]=deltavmax;   else params["sailYaw"]=-deltavmax; //
 		
-		if (sin(-psi_ap)>0) params["sailYaw"]=deltavmax;   else params["sailYaw"]=-deltavmax; //
-		display.sendParams(params);
+		display.sendSailBoatState("auv1", 10*cos(2*M_PI*t/10), 10*sin(2*M_PI*t/10), theta);
+		
+		//display.sendParams(params);
 
 		t += dt;
 		usleep(dt*1000000);
