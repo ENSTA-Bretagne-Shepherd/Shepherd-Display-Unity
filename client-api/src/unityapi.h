@@ -13,7 +13,7 @@ public:
 	DisplayAPI(const char* address, int port);
 	~DisplayAPI();
     void sendParams(Params params);
-    void setPosition(std::string auvname, double x, double y, double theta);
+    void setState(std::string auvname, double x, double y, double theta);
 private:
 	int sock;
 };

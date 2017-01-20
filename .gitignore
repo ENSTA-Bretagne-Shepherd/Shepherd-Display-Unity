@@ -8,5 +8,5 @@ Temp/
 
 
 # Client
-client-api/build
-
+client-api/build/
+client-api/.metadata/
