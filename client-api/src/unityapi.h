@@ -5,38 +5,15 @@
 #include <vector>
 #include <map>
 
-#ifdef WIN32
-#include <windows.h>
-#include <winsock2.h>
-#include <ws2tcpip.h>
-#include <stdlib.h>
-#include <stdio.h>
-
-
-// Need to link with Ws2_32.lib, Mswsock.lib, and Advapi32.lib
-#pragma comment (lib, "Ws2_32.lib")
-#pragma comment (lib, "Mswsock.lib")
-#pragma comment (lib, "AdvApi32.lib")
-#endif
-
 class Params; // Forward declaration of Params
 
-class DisplayAPI
-{
-public:
-	DisplayAPI(const char* address, int port);
-	~DisplayAPI();
-    void sendParams(Params params);
-    void sendSailBoatState(std::string auvname, double x, double y, double theta);
-    void sendBuoyState(std::string auvname, double x, double y, double z);
-    void displaySegment(double x1, double y1, double x2, double y2);
-private:
-    #ifndef WIN32
-	int sock;
-    #else
-    SOCKET sock = INVALID_SOCKET;
-    #endif
-};
+void init_unity_connection(const char* peerHost, int peerPort);
+void close_unity_connection();
+void sendParams(Params params);
+void sendSailBoatState(std::string auvname, double x, double y, double theta, double thetav);
+void sendBuoyState(std::string auvname, double x, double y, double z);
+void displaySegment(double x1, double y1, double x2, double y2);
+
 
 /*!
  * A class to hold any type supported by vibes properties system, an to provide JSON serialization

@@ -8,13 +8,14 @@
 #include <vector>
 #include <map>
 
-#ifndef WIN32
 
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <netdb.h>
 
-DisplayAPI::DisplayAPI(const char* peerHost, int peerPort)
+int sock;
+
+void init_unity_connection(const char* peerHost, int peerPort)
 {
 	// Create
 	sock = socket(AF_INET, SOCK_STREAM, 0);
@@ -47,11 +48,11 @@ DisplayAPI::DisplayAPI(const char* peerHost, int peerPort)
     printf("Connected. Reading a server message.\n");
 }
 
-DisplayAPI::~DisplayAPI(){
+void close_unity_connection(){
     close(sock);
 }
 
-void DisplayAPI::sendParams(Params params){
+void sendParams(Params params){
     std::string msg = Value(params).toJSONString().append("\n");
 	
     int n = write(sock, msg.c_str(), msg.size());
@@ -59,116 +60,40 @@ void DisplayAPI::sendParams(Params params){
         printf("Error while writing to socket.\n");
 }
 
-void DisplayAPI::sendSailBoatState(std::string auvname, double x, double y, double theta){
+void sendSailBoatState(std::string auvname, double x, double y, double theta, double thetav){
+    Params p;
+    p["name"] = auvname;
+    p["x"] = x;
+    p["y"] = y;
+    p["yaw"] = theta;
+    p["sailYaw"] = thetav;
     Params params;
-    params["type"] = "sailboat";
-    params["name"] = auvname;
-    params["x"] = x;
-    params["y"] = y;
-    params["yaw"] = theta;
+    params["Sailboat"] = p;
     sendParams(params);
 }
 
-void DisplayAPI::sendBuoyState(std::string auvname, double x, double y, double z){
+void sendBuoyState(std::string auvname, double x, double y, double z){
+    Params p;
+    p["name"] = auvname;
+    p["x"] = x;
+    p["y"] = y;
+    p["z"] = z;
     Params params;
-    params["type"] = "buoy";
-    params["name"] = auvname;
-    params["x"] = x;
-    params["y"] = y;
-    params["z"] = z;
+    params["Buoy"] = p;
+
     sendParams(params);
 }
 
 void displaySegment(double x1, double y1, double x2, double y2){
-    Params["type"] = "segment";
-    params["x1"] = x1;
-    params["y1"] = y1;
-    params["x2"] = x2;
-    params["y2"] = y2;
+    Params p;
+    p["x1"] = x1;
+    p["y1"] = y1;
+    p["x2"] = x2;
+    p["y2"] = y2;
+    Params params;
+    params["Segment"] = p;
+    sendParams(params);
 }
-
-#else
-
-DisplayAPI::DisplayAPI(const char* peerHost, int peerPort)
-{
-    WSADATA wsaData;
-    struct addrinfo *result = NULL,
-                    *ptr = NULL,
-                    hints;
-
-    // Initialize Winsock
-    iResult = WSAStartup(MAKEWORD(2,2), &wsaData);
-    if (iResult != 0) {
-        printf("WSAStartup failed with error: %d\n", iResult);
-        return 1;
-    }
-
-    ZeroMemory( &hints, sizeof(hints) );
-    hints.ai_family = AF_UNSPEC;
-    hints.ai_socktype = SOCK_STREAM;
-    hints.ai_protocol = IPPROTO_TCP;
-
-    // Resolve the server address and port
-    iResult = getaddrinfo(peerHost, peerPort, &hints, &result);
-    if ( iResult != 0 ) {
-        printf("getaddrinfo failed with error: %d\n", iResult);
-        WSACleanup();
-        return 1;
-    }
-
-    // Attempt to connect to an address until one succeeds
-    for(ptr=result; ptr != NULL ;ptr=ptr->ai_next) {
-
-        // Create a SOCKET for connecting to server
-        sock = socket(ptr->ai_family, ptr->ai_socktype, 
-            ptr->ai_protocol);
-        if (sock == INVALID_SOCKET) {
-            printf("socket failed with error: %ld\n", WSAGetLastError());
-            WSACleanup();
-            return 1;
-        }
-
-        // Connect to server.
-        iResult = connect( sock, ptr->ai_addr, (int)ptr->ai_addrlen);
-        if (iResult == SOCKET_ERROR) {
-            closesocket(sock);
-            sock = INVALID_SOCKET;
-            continue;
-        }
-        break;
-    }
-
-    freeaddrinfo(result);
-
-    if (sock == INVALID_SOCKET) {
-        printf("Unable to connect to server!\n");
-        WSACleanup();
-        return 1;
-    }
-}
-
-DisplayAPI::~DisplayAPI(){
-    // cleanup
-    closesocket(ConnectSocket);
-    WSACleanup();
-}
-
-void DisplayAPI::sendParams(Params params){
-    std::string msg = Value(params).toJSONString().append("\n");
-    
-    int iResult = send( sock, msg.c_str(), msg.size(), 0 );
-    if (iResult == SOCKET_ERROR) {
-        printf("send failed with error: %d\n", WSAGetLastError());
-        closesocket(ConnectSocket);
-        WSACleanup();
-        return 1;
-    }
-
-}
-
-
-#endif
-
 
 // Utility JSON
 std::string Value::toJSONString() const {

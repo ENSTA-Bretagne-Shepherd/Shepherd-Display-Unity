@@ -47,10 +47,12 @@
   </ItemGroup>
   <ItemGroup>
      <Compile Include="Assets\Scripts\AuvBehaviour.cs" />
-     <Compile Include="Assets\Scripts\AuvState.cs" />
      <Compile Include="Assets\Scripts\Boatmovement.cs" />
+     <Compile Include="Assets\Scripts\BuoySerial.cs" />
      <Compile Include="Assets\Scripts\Buoyancy.cs" />
      <Compile Include="Assets\Scripts\CameraBehaviour.cs" />
+     <Compile Include="Assets\Scripts\JsonSerial.cs" />
+     <Compile Include="Assets\Scripts\SailboatSerial.cs" />
      <Compile Include="Assets\Scripts\SimulationManager.cs" />
      <Compile Include="Assets\Scripts\TCPserver.cs" />
      <Compile Include="Assets\Scripts\camera.cs" />

@@ -7,6 +7,7 @@ using System.Text;
 using System;
 using System.Threading;
 using System.Collections.Generic;
+using System.Linq;
 
 public class TCPserver:MonoBehaviour{
 	// Global access
@@ -76,12 +77,11 @@ public class TCPserver:MonoBehaviour{
 
 			// Buffer for reading data
 			Byte[] bytes = new Byte[256];
-			string data = null;
 
 			// Enter the listening loop.
 			while(true)
 			{
-				Thread.Sleep(10);
+				//Thread.Sleep(10);
 				Debug.Log("Waiting for a connection... ");
 
 				// Perform a blocking call to accept requests.
@@ -92,26 +92,38 @@ public class TCPserver:MonoBehaviour{
 					Debug.Log("Connected!");
 				}
 
-				data = null;
 
 				// Get a stream object for reading and writing
 				NetworkStream stream = client.GetStream();
 
-				int i;
+				string tmp;
 
 				// Loop to receive all the data sent by the client.
-				while((i = stream.Read(bytes, 0, bytes.Length))!=0)
+				while(stream.Read(bytes, 0, bytes.Length) != 0)
 				{  
 					// Translate data bytes to a ASCII string.
-					data = System.Text.Encoding.ASCII.GetString(bytes, 0, i);
-					Debug.Log("Received:"+ data);
+					string[] data = System.Text.Encoding.ASCII.GetString(bytes).Split('\n');
+					
+					// if(data[data.Length-1][data[data.Length-1].Length-1] != '}'){
+					// 	tmp = data[data.Length-1];
+					// 	data = data.Take(data.Count()-1).ToArray();
+					// }else{
+					// 	tmp = "";
+					// }
+					// data[0] = tmp + data[0];
 
 					//add situation message to queue
 					lock (_queueLock)
 					{
-						if (TaskQueue.Count < 100)
-							TaskQueue.Enqueue(data);
+						foreach(var s in data){
+							if(s.Length != 0){
+								if (TaskQueue.Count < 100)
+									TaskQueue.Enqueue(s);
+									Debug.Log("Queue: " + s);
+							}
+						}
 					}
+
 
 					// // Process the data sent by the client.
 					// data = data.ToUpper();
