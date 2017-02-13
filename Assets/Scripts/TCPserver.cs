@@ -96,30 +96,42 @@ public class TCPserver:MonoBehaviour{
 				// Get a stream object for reading and writing
 				NetworkStream stream = client.GetStream();
 
-				string tmp;
+				string tmp = "";
 
 				// Loop to receive all the data sent by the client.
 				while(stream.Read(bytes, 0, bytes.Length) != 0)
 				{  
 					// Translate data bytes to a ASCII string.
-					string[] data = System.Text.Encoding.ASCII.GetString(bytes).Split('\n');
+					string rcv = System.Text.Encoding.ASCII.GetString(bytes);
+					Debug.Log("Received: " + rcv);
 					
-					// if(data[data.Length-1][data[data.Length-1].Length-1] != '}'){
-					// 	tmp = data[data.Length-1];
-					// 	data = data.Take(data.Count()-1).ToArray();
-					// }else{
-					// 	tmp = "";
-					// }
-					// data[0] = tmp + data[0];
+					Debug.Log(rcv);
+					string[] data = rcv.Split('\n');
+					if(data[data.Count()-1][0] != '{')
+					{
+						data = data.Take(data.Count()-1).ToArray();
+					}
+					Debug.Log(rcv);
+					
+					
+					data[0] = tmp + data[0];
+					if(data[data.Count()-1][data[data.Count()-1].Length-1] != '}'){
+						tmp = data[data.Count()-1];
+						Debug.Log(data.Count()+ "Tmp: " + tmp);
+						data = data.Take(data.Count()-1).ToArray();
+						Debug.Log(data.Count()+ "Tmp: " + tmp);
+					}else{
+						tmp = "";
+					}
+					
 
 					//add situation message to queue
 					lock (_queueLock)
 					{
 						foreach(var s in data){
-							if(s.Length != 0){
-								if (TaskQueue.Count < 100)
-									TaskQueue.Enqueue(s);
-									Debug.Log("Queue: " + s);
+							if(TaskQueue.Count < 100){
+								TaskQueue.Enqueue(s);
+								Debug.Log("Size: " + s.Length + "Queue: " + s);
 							}
 						}
 					}
@@ -133,7 +145,8 @@ public class TCPserver:MonoBehaviour{
 
 					// // Send back a response.
 					// stream.Write(msg, 0, msg.Length);
-					// Debug.Log("Sent:"+ data);          
+					// Debug.Log("Sent:"+ data);  
+					Array.Clear(bytes, 0, bytes.Length);        
 				}
 
 				// Shutdown and end connection
